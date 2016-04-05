@@ -1,0 +1,3 @@
+--require test/bootstrap.js
+--require co-mocha
+--timeout 5000
