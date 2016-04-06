@@ -184,7 +184,7 @@ describe('Logger.class.js', () => {
     logger.emit('read', JSON.stringify(message));
   });
 
-  it('supports bunyan serializer', (done) => {
+  it('supports bunyan-like serializer', (done) => {
     const logger = new Logger({
       streams: [{
         name: 'test',
@@ -201,7 +201,7 @@ describe('Logger.class.js', () => {
     logger.fatal(new Error('Custom error'), {a:1}, 'Hello');
   });
 
-  it('supports bunyan serializer from message emission', (done) => {
+  it('supports bunyan-like serializer from message emission', (done) => {
     const logger = new Logger({
       streams: [{
         name: 'test',

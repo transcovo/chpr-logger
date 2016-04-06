@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "NODE_ENV=test istanbul cover node_modules/mocha/bin/_mocha --include-all-sources --root ./ -- --recursive",
+    "test": "NODE_ENV=test istanbul cover node_modules/mocha/bin/_mocha --root ./lib --include-all-sources --root ./ -- --recursive",
     "mocha": "NODE_ENV=test node_modules/mocha/bin/_mocha test/ --recursive"
   },
   "keywords": [

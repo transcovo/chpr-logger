@@ -8,7 +8,7 @@ const logger = new Logger({
   streams: [{
     name: 'bunyan',
     stream: process.stdout,
-    serializer: serializerFactory.create('bunyan')
+    serializer: 'bunyan'
   }]
 });
 
