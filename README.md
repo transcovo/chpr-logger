@@ -52,6 +52,27 @@ logger.debug({ field: 1 }, 'debug message');
 // Log a trace message:
 logger.trace({ field: 1 }, 'trace message');
 
+```
 
+## Configuration
+
+The logger is accepting configuration for streams definition, stats addition, etc.
+
+Here is a full example of logger configuration:
+
+```javascript
+'use strict';
+
+const logger = require('logger');
+
+logger.init({
+  name: 'my-logger',
+  withStats: true,
+  streams: [{
+    name: 'bunyan',
+    stream: process.stdout,
+    serializer: 'bunyan'
+  }]
+})
 
 ```
