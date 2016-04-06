@@ -1,16 +1,31 @@
 # Logger for NodeJS
 
-## Design
+## Getting started
 
-- Agnostic logger for NodeJS
-- Works on NodeJS and browser
+### Installation
 
-## Objectives
+```bash
+# Install the current node versio:
+nvm install
 
+# Install node dependencies
+npm install
 
+# Perform the tests
+npm test
+```
 
-- Log on different levels
-- Support streams
-- Support dependency injection
-- Support metrology
-- Support instanciation
+### Require the module
+
+```json
+{
+  "dependencies": {
+    "logger": "git+https://04f5b04a0a707afbdcb70cf1c093471dfabc34c4:x-oauth-basic@github.com/transcovo/logger.git#1.0.0"
+  }
+}
+```
+
+TODO: create the npm repository
+
+## Logging
+
