@@ -27,6 +27,8 @@ npm test
 
 TODO: create the npm repository
 
+## Logging
+
 ```javascript
 'use strict';
 
@@ -53,6 +55,3 @@ logger.trace({ field: 1 }, 'trace message');
 
 
 ```
-
-## Logging
-
