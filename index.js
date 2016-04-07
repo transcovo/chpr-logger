@@ -19,6 +19,10 @@ const config = {
   }
 };
 
+if (process.env.LOGGER_NO_STDOUT) {
+  config.logger.streams.shift();
+}
+
 if (process.env.LOGGER_METRICS_HOST) {
   config.metrics = {
     host: process.env.LOGGER_METRICS_HOST,
