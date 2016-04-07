@@ -10,7 +10,7 @@ const Logger = require('./lib/Logger');
 // Default logger configuration:
 const config = {
   logger: {
-    name: process.env.LOGGER_NAME || 'API-Node',
+    name: process.env.LOGGER_NAME || 'app',
     level: process.env.LOGGER_LEVEL || 'info',
     streams: [{
       level: process.env.LOGGER_LEVEL || 'info',
