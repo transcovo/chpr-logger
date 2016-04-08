@@ -4,4 +4,5 @@ machine:
 dependencies:
 test:
   post:
+    - npm install eslint -g
     - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
