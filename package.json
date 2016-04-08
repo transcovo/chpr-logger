@@ -22,6 +22,15 @@
     "istanbul": "^0.4.2",
     "mocha": "^2.4.5",
     "mocha-lcov-reporter": "^1.0.0",
-    "nock": "^7.0.2"
+    "nock": "^7.0.2",
+    "sinon": "^1.17.3"
+  },
+  "dependencies": {
+    "bunyan": "^1.8.0",
+    "bunyan-sentry-stream": "^1.0.1",
+    "le_node": "^1.2.0",
+    "lodash": "^4.8.2",
+    "node-statsd": "^0.1.1",
+    "raven": "^0.10.0"
   }
 }
