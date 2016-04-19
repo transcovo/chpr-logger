@@ -1,6 +1,6 @@
 'use strict';
 
-const chai = require('chai');
+var chai = require('chai');
 
 /**
  * Load all necessary modules for the tests.

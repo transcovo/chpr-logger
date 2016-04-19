@@ -43,10 +43,24 @@ describe('Logger.js', function() {
     process.stdout.write = old_stdout_write;
   });
 
-  it('patchGlobal extend global.console functions',function(){
-    expect(global.console.fatal).to.not.exist;
-    expect(global.console.debug).to.not.exist;
-    expect(global.console.metric).to.not.exist;
+  it('should be able to use metrics without having to path global first', function () {
+    expect(global.console).to.not.have.property('fatal'); // make sure this tests stays before global patch
+
+    var logger = new Logger({
+      metrics: {
+        host: 'host.example.com',
+        port: '1234',
+        prefix: 'whatever.',
+        cacheDns: false
+      }
+    });
+    logger.metric('increment', 'who.cares');
+  });
+
+  it('patchGlobal extend global.console functions', function () {
+    expect(global.console).to.not.have.property('fatal');
+    expect(global.console).to.not.have.property('debug');
+    expect(global.console).to.not.have.property('metric');
     logger.patchGlobal();
     expect(typeof global.console.fatal).to.be.eql('function');
     expect(typeof global.console.debug).to.be.eql('function');
