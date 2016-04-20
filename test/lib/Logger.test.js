@@ -2,6 +2,7 @@
 
 var dgram = require('dgram');
 var _ = require('lodash');
+const expect = require('chai').expect;
 
 // Load the Logger class:
 var Logger = require('../../lib/Logger');
