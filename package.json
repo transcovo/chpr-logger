@@ -22,6 +22,7 @@
     "mocha": "^2.4.5",
     "mocha-lcov-reporter": "^1.0.0",
     "nock": "^7.0.2",
+    "coveralls": "^2.11.6",
     "sinon": "^1.17.3"
   },
   "dependencies": {
