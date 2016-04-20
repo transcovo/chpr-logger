@@ -32,5 +32,8 @@
     "lodash": "^4.8.2",
     "node-statsd": "^0.1.1",
     "raven": "^0.10.0"
+  },
+  "engines": {
+    "node": "^5.0.0"
   }
 }
