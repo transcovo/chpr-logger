@@ -28,8 +28,8 @@ if (process.env.LOGGER_METRICS_HOST) {
     host: process.env.LOGGER_METRICS_HOST,
     port: process.env.LOGGER_METRICS_PORT,
     prefix: process.env.LOGGER_METRICS_PREFIX || '',
-    suffix: process.env.LOGGER_METRICS_SUFFIX ||  '',
-    cacheDns: process.env.LOGGER_METRICS_CACHE_DNS ||  false
+    suffix: process.env.LOGGER_METRICS_SUFFIX || '',
+    cacheDns: process.env.LOGGER_METRICS_CACHE_DNS || false
   };
 }
 

@@ -1,8 +1,0 @@
-machine:
-  node:
-    version: 5.4.1
-dependencies:
-test:
-  post:
-    - npm install eslint -g
-    - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js

@@ -7,14 +7,13 @@
     "test": "test"
   },
   "scripts": {
-    "istanbul": "NODE_ENV=test istanbul cover node_modules/mocha/bin/_mocha --root ./lib --include-all-sources --root ./ -- --recursive",
-    "test": "NODE_ENV=test node_modules/mocha/bin/_mocha test/ --recursive"
+    "test": "eslint . && istanbul cover _mocha --root ./lib --include-all-sources --root ./ -- --recursive"
   },
   "keywords": [
     "logger"
   ],
   "author": "Chauffeur-Privé",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "chai": "^3.5.0",
     "co-mocha": "^1.1.2",
@@ -23,6 +22,7 @@
     "mocha": "^2.4.5",
     "mocha-lcov-reporter": "^1.0.0",
     "nock": "^7.0.2",
+    "coveralls": "^2.11.6",
     "sinon": "^1.17.3"
   },
   "dependencies": {
@@ -32,5 +32,8 @@
     "lodash": "^4.8.2",
     "node-statsd": "^0.1.1",
     "raven": "^0.10.0"
+  },
+  "engines": {
+    "node": "^5.0.0"
   }
 }
