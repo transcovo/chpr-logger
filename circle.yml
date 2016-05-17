@@ -1,3 +1,9 @@
 machine:
   node:
-    version: 5.0.0
+    version: 4.0.0
+  environment:
+    foo: bar
+    COVERALLS_REPO_TOKEN: LJeZRHlXyEFxNGsRmYCIoZS6ecommFh5f
+test:
+  post:
+    - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
