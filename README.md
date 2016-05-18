@@ -9,7 +9,7 @@ Minimum Node.js version: 4
 ## Installation
 
 ```bash
-npm install --save cp-logger
+npm install --save chpr-logger
 ```
 
 ## Configuration
@@ -24,7 +24,7 @@ npm install --save cp-logger
 ```javascript
 'use strict';
 
-const logger = require('cp-logger');
+const logger = require('chpr-logger');
 
 // Log a fatal error message:
 logger.fatal(new Error('Fatal'), { field: 1 }, 'fatal message');
