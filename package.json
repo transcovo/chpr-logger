@@ -1,5 +1,5 @@
 {
-  "name": "logger",
+  "name": "chpr-logger",
   "version": "2.0.0",
   "description": "Logger for NodeJS application stack",
   "main": "index.js",
