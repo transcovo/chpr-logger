@@ -1,38 +1,30 @@
 # Logger for NodeJS
 
-## Getting started
+This utility library implements our standard Bunyan + Logentries + Sentry configuration
 
-### Installation
+## Requirements
+
+Minimum Node.js version: 4
+
+## Installation
 
 ```bash
-# Install the current node versio:
-nvm install
-
-# Install node dependencies
-npm install
-
-# Perform the tests
-npm test
+npm install --save cp-logger
 ```
 
-### Require the module
+## Configuration
 
-```json
-{
-  "dependencies": {
-    "logger": "git+https://xxx@github.com/transcovo/logger.git#1.0.0"
-  }
-}
-```
+* LOGGER_NAME (required)
+* LOGGER_LEVEL (required)
+* LOGENTRIES_TOKEN (optional)
+* SENTRY_DSN (optional)
 
-TODO: create the npm repository
-
-## Logging
+## Use
 
 ```javascript
 'use strict';
 
-const logger = require('logger');
+const logger = require('cp-logger');
 
 // Log a fatal error message:
 logger.fatal(new Error('Fatal'), { field: 1 }, 'fatal message');
