@@ -23,7 +23,11 @@ const config = {
 };
 
 if (process.env.LOGENTRIES_TOKEN) {
-  config.streams.push(le.bunyanStream({ token: process.env.LOGENTRIES_TOKEN }));
+  config.streams.push(le.bunyanStream({
+    token: process.env.LOGENTRIES_TOKEN,
+    minLevel: loggerLevel,
+    withStack: true
+  }));
 }
 
 if (process.env.SENTRY_DSN) {
