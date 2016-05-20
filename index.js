@@ -4,26 +4,34 @@ const bunyan = require('bunyan');
 const raven = require('raven');
 const sentryStream = require('bunyan-sentry-stream');
 const le = require('le_node');
+const PrettyStream = require('bunyan-prettystream');
 
-// trace is a useful default for dev
 const loggerLevel = process.env.LOGGER_LEVEL || 'info';
-const loggerName = process.env.LOGGER_NAME || 'Developpment logger';
+const loggerName = process.env.LOGGER_NAME || 'Development logger';
 
-// Default logger configuration:
 const config = {
   name: loggerName,
   level: loggerLevel,
-  streams: [{
-    level: loggerLevel,
-    stream: process.stdout
-  }],
+  streams: [],
   serializers: {
-    err: bunyan.stdSerializers.err   // <--- use this
+    err: bunyan.stdSerializers.err
   }
 };
 
+if (process.env.USE_PRETTY_LOG_FORMAT === 'true') {
+  const prettyStdOut = new PrettyStream();
+  prettyStdOut.pipe(process.stdout);
+  config.streams.push({ type: 'raw', level: loggerLevel, stream: prettyStdOut });
+} else {
+  config.streams.push({ level: loggerLevel, stream: process.stdout });
+}
+
 if (process.env.LOGENTRIES_TOKEN) {
-  config.streams.push(le.bunyanStream({ token: process.env.LOGENTRIES_TOKEN }));
+  config.streams.push(le.bunyanStream({
+    token: process.env.LOGENTRIES_TOKEN,
+    minLevel: loggerLevel,
+    withStack: true
+  }));
 }
 
 if (process.env.SENTRY_DSN) {

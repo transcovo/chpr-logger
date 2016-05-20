@@ -1,13 +1,14 @@
 {
   "name": "chpr-logger",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Logger for NodeJS application stack",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "eslint . && istanbul cover _mocha --root ./lib --include-all-sources --root ./ -- --recursive"
+    "pretest": "eslint .",
+    "test": "NODE_ENV=test istanbul cover _mocha -- --recursive"
   },
   "keywords": [
     "logger"
@@ -17,21 +18,24 @@
   "devDependencies": {
     "chai": "3.5.0",
     "co-mocha": "1.1.2",
-    "eslint-config-cp": "github:transcovo/eslint-config-cp#1.1.0",
+    "coveralls": "2.11.9",
+    "eslint": "1.10.3",
+    "eslint-config-airbnb": "2.0.0",
+    "eslint-config-cp": "1.1.0",
     "istanbul": "0.4.3",
     "mocha": "2.4.5",
     "mocha-lcov-reporter": "1.2.0",
     "nock": "8.0.0",
-    "coveralls": "2.11.9",
     "rewire": "2.5.1"
   },
   "dependencies": {
     "bunyan": "1.8.1",
+    "bunyan-prettystream": "0.1.3",
     "bunyan-sentry-stream": "1.0.2",
     "le_node": "1.3.1",
     "raven": "0.11.0"
   },
   "engines": {
-    "node": ">4.0.0"
+    "node": ">=4.0.0"
   }
 }
