@@ -18,7 +18,7 @@ const config = {
   }
 };
 
-if (process.env.USE_PRETTY_LOG_FORMAT === 'true') {
+if (process.env.USE_BUNYAN_PRETTY_STREAM === 'true') {
   const prettyStdOut = new PrettyStream();
   prettyStdOut.pipe(process.stdout);
   config.streams.push({ type: 'raw', level: loggerLevel, stream: prettyStdOut });

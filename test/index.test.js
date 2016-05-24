@@ -153,8 +153,8 @@ describe('index.js', () => {
       expect(config.streams[0]).to.not.include.keys('type');
     });
 
-    it('should use ', () => {
-      process.env.USE_PRETTY_LOG_FORMAT = 'true';
+    it('should use the pretty stream formatter with USE_BUNYAN_PRETTY_STREAM set to true', () => {
+      process.env.USE_BUNYAN_PRETTY_STREAM = 'true';
       const config = reloadConfig();
 
       expect(config.streams).to.have.lengthOf(1);
