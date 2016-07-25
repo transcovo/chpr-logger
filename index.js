@@ -35,7 +35,7 @@ if (process.env.LOGENTRIES_TOKEN) {
 }
 
 if (process.env.SENTRY_DSN) {
-  const client = new raven.Client(process.env.SENTRY_DSN, {/* EXTRAS */});
+  const client = new raven.Client(process.env.SENTRY_DSN, { name: loggerName });
   client.patchGlobal();
   config.streams.push(sentryStream(client));
 }
