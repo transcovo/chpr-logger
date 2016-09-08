@@ -34,8 +34,9 @@ if (process.env.LOGENTRIES_TOKEN) {
   }));
 }
 
+let client;
 if (process.env.SENTRY_DSN) {
-  const client = new raven.Client(process.env.SENTRY_DSN, { name: loggerName });
+  client = new raven.Client(process.env.SENTRY_DSN, { name: loggerName });
   client.patchGlobal();
   config.streams.push(sentryStream(client));
 }
@@ -44,3 +45,5 @@ if (process.env.SENTRY_DSN) {
 const logger = bunyan.createLogger(config);
 
 module.exports = logger;
+module.exports.raven = raven;
+module.exports.ravenClient = client;

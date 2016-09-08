@@ -1,6 +1,6 @@
 {
   "name": "chpr-logger",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Logger for NodeJS application stack",
   "main": "index.js",
   "directories": {

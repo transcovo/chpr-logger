@@ -1,7 +1,11 @@
 'use strict';
 
+const raven = require('raven');
+
 const expect = require('chai').expect;
 const rewire = require('rewire');
+
+let logger = require('../index');
 
 const PrettyStream = require('bunyan-prettystream');
 const SentryStream = require('bunyan-sentry-stream').SentryStream;
@@ -9,8 +13,31 @@ const SentryStream = require('bunyan-sentry-stream').SentryStream;
 describe('index.js', () => {
   let oldStdoutWrite;
 
+  describe('Exports', () => {
+    it('should export a reference to raven', () => {
+      expect(logger).to.have.property('raven', raven);
+    });
+
+    it('should export the raven client (no sentry DSN set)', () => {
+      expect(logger).to.have.property('ravenClient', undefined);
+    });
+
+    it('should export the raven client (with sentry DSN set)', () => {
+      const oldEnv = process.env;
+      process.env = {
+        LOGGER_NAME: 'Test logger name',
+        LOGGER_LEVEL: 'debug',
+        LOGENTRIES_TOKEN: '00000000-0000-0000-0000-000000000000',
+        SENTRY_DSN: 'https://a:b@fake.com/12345'
+      };
+      logger = rewire('../index');
+      expect(logger).to.have.property('ravenClient');
+      expect(logger.ravenClient).to.be.instanceof(raven.Client);
+      process.env = oldEnv;
+    });
+  });
+
   describe('Log functions', () => {
-    let logger;
     const logs = [];
 
     before(() => {
