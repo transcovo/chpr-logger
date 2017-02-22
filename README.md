@@ -31,22 +31,31 @@ npm install --save chpr-logger
 
 const logger = require('chpr-logger');
 
+/* The signature is logger[level](context, message) where:
+- context is an object containing all info to be logged
+- context may be passed an `err` property that is an error and will be used by
+  sentry to regroup errors and capture proper stacktraces
+- message is just a string explaining what the log is
+
+As in bunyan, context is optional and logger[level](message) can also work.
+*/
+
 // Log a fatal error message:
-logger.fatal(new Error('Fatal'), { field: 1 }, 'fatal message');
+logger.fatal({ err: new Error('Fatal'), field: 'additional info' }, 'fatal message');
 
 // Log an error message:
-logger.error(new Error('Error'), { field: 1 }, 'error message');
+logger.error({ err: new Error('Error'), anotherField: 'extra context' }, 'error message');
 
 // Log a warning message:
-logger.warn(new Error('Warn'), { field: 1 }, 'warn message');
+logger.warn({ err: new Error('Warn'), userId:'1e7b8d', age: 17 }, 'User is under 18');
 
 // Log an informational message:
 logger.info({ field: 1 }, 'info message');
 
 // Log a debug message:
-logger.debug({ field: 1 }, 'debug message');
+logger.debug({ user }, 'debug message');
 
 // Log a trace message:
-logger.trace({ field: 1 }, 'trace message');
+logger.trace({ fields: [1, 2, 66]] }, 'trace message');
 
 ```
