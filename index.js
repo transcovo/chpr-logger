@@ -4,7 +4,6 @@ const bunyan = require('bunyan');
 const raven = require('raven');
 const sentryStream = require('bunyan-sentry-stream');
 const logstashStream = require('bunyan-logstash-tcp');
-const le = require('le_node');
 const PrettyStream = require('bunyan-prettystream');
 
 
@@ -26,14 +25,6 @@ if (process.env.USE_BUNYAN_PRETTY_STREAM === 'true') {
   config.streams.push({ type: 'raw', level: loggerLevel, stream: prettyStdOut });
 } else {
   config.streams.push({ level: loggerLevel, stream: process.stdout });
-}
-
-if (process.env.LOGENTRIES_TOKEN) {
-  config.streams.push(le.bunyanStream({
-    token: process.env.LOGENTRIES_TOKEN,
-    minLevel: loggerLevel,
-    withStack: true
-  }));
 }
 
 if (process.env.LOGSTASH_HOST) {
