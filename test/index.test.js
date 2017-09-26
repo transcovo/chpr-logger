@@ -28,7 +28,6 @@ describe('index.js', () => {
       process.env = {
         LOGGER_NAME: 'Test logger name',
         LOGGER_LEVEL: 'debug',
-        LOGENTRIES_TOKEN: '00000000-0000-0000-0000-000000000000',
         SENTRY_DSN: 'https://a:b@fake.com/12345'
       };
       logger = rewire('../index');
@@ -57,7 +56,6 @@ describe('index.js', () => {
       process.env = {
         LOGGER_NAME: 'Test logger name',
         LOGGER_LEVEL: 'debug',
-        LOGENTRIES_TOKEN: '00000000-0000-0000-0000-000000000000',
         SENTRY_DSN: 'https://a:b@fake.com/12345'
       };
       logger = rewire('../index');
@@ -189,14 +187,6 @@ describe('index.js', () => {
       expect(config.streams[0]).to.have.property('type', 'raw');
       expect(config.streams[0]).to.have.property('level', 'info');
       expect(config.streams[0].stream).to.be.instanceOf(PrettyStream);
-    });
-
-    it('should have sentry stream with LOGENTRIES_TOKEN set', () => {
-      process.env.LOGENTRIES_TOKEN = '00000000-0000-0000-0000-000000000000';
-      const config = reloadConfig();
-
-      expect(config.streams).to.have.lengthOf(2);
-      expect(config.streams[1].name).to.equal('logentries');
     });
 
     it('should have sentry stream with SENTRY_DSN set', () => {

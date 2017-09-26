@@ -1,6 +1,6 @@
 # Logger for NodeJS
 
-This utility library implements our standard Bunyan + Logentries + Sentry configuration
+This utility library implements our standard Bunyan + Sentry configuration
 
 ## Requirements
 
@@ -18,7 +18,6 @@ npm install --save chpr-logger
 |--------------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | LOGGER_NAME              | yes      | Sets the name of the logger.                                                                                                                                                      |
 | LOGGER_LEVEL             | yes      | Set the minimum level of logs.                                                                                                                                                    |
-| LOGENTRIES_TOKEN         | no       | Sets the Logentries stream. ([le_node](https://www.npmjs.com/package/le_node))                                                                                                    |
 | SENTRY_DSN               | no       | Sets the Sentry stream. ([bunyan-sentry-stream](https://www.npmjs.com/package/bunyan-sentry-stream))                                                                              |
 | USE_BUNYAN_PRETTY_STREAM | no       | Outputs the logs on stdout with the pretty formatting from Bunyan. Must be set to `true` to be active. ([bunyan-prettystream](https://www.npmjs.com/package/bunyan-prettystream)) |
 | LOGSTASH_HOST            | no       | Logstash host, if you want to configure a logstash stream                                                                                                                         |
