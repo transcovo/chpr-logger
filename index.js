@@ -40,7 +40,7 @@ if (process.env.LOGSTASH_HOST) {
 let client;
 if (process.env.SENTRY_DSN) {
   client = new raven.Client(process.env.SENTRY_DSN, { name: loggerName });
-  client.patchGlobal();
+  client.install();
   config.streams.push(sentryStream(client));
 }
 

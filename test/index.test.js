@@ -32,7 +32,7 @@ describe('index.js', () => {
       };
       logger = rewire('../index');
       expect(logger).to.have.property('ravenClient');
-      expect(logger.ravenClient).to.be.instanceof(raven.Client);
+      expect(logger.ravenClient).to.be.instanceof(raven.Client.super_);
       process.env = oldEnv;
     });
   });
