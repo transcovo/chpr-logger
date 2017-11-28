@@ -1,6 +1,6 @@
 {
   "name": "chpr-logger",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "Logger for NodeJS application stack",
   "main": "index.js",
   "directories": {
@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "bunyan": "1.8.1",
-    "bunyan-logstash-tcp": "0.3.5",
     "bunyan-prettystream": "0.1.3",
     "bunyan-sentry-stream": "1.0.2",
     "raven": "2.2.1"

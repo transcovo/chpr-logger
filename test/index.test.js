@@ -9,7 +9,6 @@ let logger = require('../index');
 
 const PrettyStream = require('bunyan-prettystream');
 const SentryStream = require('bunyan-sentry-stream').SentryStream;
-const LogstashStream = require('bunyan-logstash-tcp').LogstashStream;
 
 describe('index.js', () => {
   let oldStdoutWrite;
@@ -195,25 +194,6 @@ describe('index.js', () => {
 
       expect(config.streams).to.have.lengthOf(2);
       expect(config.streams[1].stream).to.be.instanceOf(SentryStream);
-    });
-
-    it('should have logstash stream on the default port', () => {
-      process.env.LOGSTASH_HOST = 'samplehost';
-      const config = reloadConfig();
-      expect(config.streams).to.have.lengthOf(2);
-      expect(config.streams[1].stream).to.be.instanceOf(LogstashStream);
-      expect(config.streams[1].stream).to.have.property('host', 'samplehost');
-      expect(config.streams[1].stream).to.have.property('port', 5000);
-    });
-
-    it('should have logstash stream on the specified port', () => {
-      process.env.LOGSTASH_HOST = 'samplehost';
-      process.env.LOGSTASH_PORT = '5001';
-      const config = reloadConfig();
-      expect(config.streams).to.have.lengthOf(2);
-      expect(config.streams[1].stream).to.be.instanceOf(LogstashStream);
-      expect(config.streams[1].stream).to.have.property('host', 'samplehost');
-      expect(config.streams[1].stream).to.have.property('port', 5001);
     });
   });
 });
