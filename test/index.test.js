@@ -6,6 +6,7 @@ const expect = require('chai').expect;
 const rewire = require('rewire');
 
 let logger = require('../index');
+const SensitiveDataStream = require('../streams/sensitive-data');
 
 const PrettyStream = require('bunyan-prettystream');
 const SentryStream = require('bunyan-sentry-stream').SentryStream;
@@ -87,6 +88,7 @@ describe('index.js', () => {
       expect(message.err).to.be.an('object').with.property('stack');
       expect(message.err.stack.substr(0, 18)).to.be.eql('Error: Fatal error');
     });
+
     it('should output the error level message', () => {
       logger.error('hello');
       let message = logs.shift();
@@ -107,22 +109,26 @@ describe('index.js', () => {
       expect(message.err).to.be.an('object');
       expect(message.err.stack.substr(0, 18)).to.be.eql('Error: Fatal error');
     });
+
     it('should output the warn level message', () => {
       logger.warn('hello');
       const message = logs.shift();
       expect(message).to.have.property('level', 40);
       expect(message).to.not.have.property('stack');
     });
+
     it('should output the info level message', () => {
       logger.info('hello');
       const message = logs.shift();
       expect(message).to.have.property('level', 30);
     });
+
     it('should output the debug level message', () => {
       logger.debug('hello');
       const message = logs.shift();
       expect(message).to.have.property('level', 20);
     });
+
     it('should not output the trace level message (level set to debug)', () => {
       logger.trace('hello');
       expect(logs).to.have.lengthOf(0);
@@ -148,6 +154,27 @@ describe('index.js', () => {
       });
       expect(message.msg).to.be.eql('hello');
     });
+
+    describe('sensitive data', () => {
+      it('must replace sensitive data with __SENSITIVE_DATA__ in logs', () => {
+        logger.info({
+          password: 'My personal password',
+          headers: {
+            'accept-language': 'fr-FR', // unchanged
+            authorization: 'Bearer token'
+          },
+          req: {
+            token: 'My personal token'
+          }
+        }, 'Logging amazingly sensitive data!');
+        const message = logs.shift();
+
+        expect(message.password).to.equal('__SENSITIVE_DATA__');
+        expect(message.headers['accept-language']).to.equal('fr-FR');
+        expect(message.headers.authorization).to.equal('__SENSITIVE_DATA__');
+        expect(message.req.token).to.equal('__SENSITIVE_DATA__');
+      });
+    });
   });
 
   describe('Streams configuration', () => {
@@ -171,11 +198,36 @@ describe('index.js', () => {
       process.env = originalEnv;
     });
 
-    it('should use only the default stdout stream without NODE_ENV', () => {
+    it('should use the sensitive data stream if no environment variable is set', () => {
       const config = reloadConfig();
 
       expect(config.streams).to.have.lengthOf(1);
       expect(config.streams[0]).to.not.include.keys('type');
+      expect(config.streams[0]).to.have.property('stream');
+
+      expect(config.streams[0].stream).to.be.instanceOf(SensitiveDataStream);
+      expect(config.streams[0].stream.fragments).to.equal('(mdp|password|authorization|token|pwd|auth)');
+    });
+
+    it('should use the sensitive data stream with specific pattern fragments if set', () => {
+      process.env.LOGGER_SENSITIVE_DATA_PATTERN = '(password)';
+      const config = reloadConfig();
+
+      expect(config.streams).to.have.lengthOf(1);
+      expect(config.streams[0]).to.not.include.keys('type');
+      expect(config.streams[0]).to.have.property('stream');
+
+      expect(config.streams[0].stream).to.be.instanceOf(SensitiveDataStream);
+      expect(config.streams[0].stream.fragments).to.equal('(password)');
+    });
+
+    it('should use only the default stdout stream if LOGGER_USE_SENSITIVE_DATA_STREAM is false', () => {
+      process.env.LOGGER_USE_SENSITIVE_DATA_STREAM = 'false';
+      const config = reloadConfig();
+
+      expect(config.streams).to.have.lengthOf(1);
+      expect(config.streams[0]).to.not.include.keys('type');
+      expect(config.streams[0]).to.have.property('stream', process.stdout);
     });
 
     it('should use the pretty stream formatter with USE_BUNYAN_PRETTY_STREAM set to true', () => {
