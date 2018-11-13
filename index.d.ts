@@ -5,7 +5,11 @@
 
 /// <reference types="node" />
 
-import Logger = require('bunyan');
+import BaseLogger = require('bunyan');
 
-declare const logger: Logger;
+declare const logger: BaseLogger;
+declare namespace logger {
+    type Logger = typeof logger;
+}
+
 export = logger;
