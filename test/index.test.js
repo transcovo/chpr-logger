@@ -28,7 +28,7 @@ describe('index.js', () => {
       process.env = {
         LOGGER_NAME: 'Test logger name',
         LOGGER_LEVEL: 'debug',
-        SENTRY_DSN: 'https://a:b@fake.com/12345'
+        SENTRY_DSN: 'https://a:b@fake.com/12345',
       };
       logger = rewire('../index');
       expect(logger).to.have.property('ravenClient');
@@ -48,7 +48,7 @@ describe('index.js', () => {
           string = JSON.parse(string);
           logs.push(string);
         } catch (e) {
-          oldStdoutWrite.apply(process.stdout, arguments);
+          oldStdoutWrite.apply(process.stdout, [string]);
         }
       };
 
@@ -56,7 +56,7 @@ describe('index.js', () => {
       process.env = {
         LOGGER_NAME: 'Test logger name',
         LOGGER_LEVEL: 'debug',
-        SENTRY_DSN: 'https://a:b@fake.com/12345'
+        SENTRY_DSN: 'https://a:b@fake.com/12345',
       };
       logger = rewire('../index');
       process.env = oldEnv;
@@ -75,7 +75,7 @@ describe('index.js', () => {
 
       // Should keep the object safe:
       logger.fatal({
-        a: 1
+        a: 1,
       }, 'hello');
       message = logs.shift();
 
@@ -96,7 +96,7 @@ describe('index.js', () => {
 
       // Should keep the object safe:
       logger.error({
-        a: 1
+        a: 1,
       }, 'hello');
       message = logs.shift();
 
@@ -144,13 +144,13 @@ describe('index.js', () => {
       logger.info({
         a: 1,
         b: {
-          c: 1
-        }
+          c: 1,
+        },
       }, 'hello');
       const message = logs.shift();
       expect(message.a).to.be.eql(1);
       expect(message.b).to.be.eql({
-        c: 1
+        c: 1,
       });
       expect(message.msg).to.be.eql('hello');
     });
@@ -161,11 +161,11 @@ describe('index.js', () => {
           password: 'My personal password',
           headers: {
             'accept-language': 'fr-FR', // unchanged
-            authorization: 'Bearer token'
+            authorization: 'Bearer token',
           },
           req: {
-            token: 'My personal token'
-          }
+            token: 'My personal token',
+          },
         }, 'Logging amazingly sensitive data!');
         const message = logs.shift();
 
