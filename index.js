@@ -15,8 +15,8 @@ const config = {
   level: loggerLevel,
   streams: [],
   serializers: {
-    err: bunyan.stdSerializers.err
-  }
+    err: bunyan.stdSerializers.err,
+  },
 };
 
 if (process.env.USE_BUNYAN_PRETTY_STREAM === 'true') {
@@ -26,7 +26,7 @@ if (process.env.USE_BUNYAN_PRETTY_STREAM === 'true') {
 } else if (process.env.LOGGER_USE_SENSITIVE_DATA_STREAM !== 'false') {
   config.streams.push({
     level: loggerLevel,
-    stream: new SensitiveDataStream(process.env.LOGGER_SENSITIVE_DATA_PATTERN)
+    stream: new SensitiveDataStream(process.env.LOGGER_SENSITIVE_DATA_PATTERN),
   });
 } else {
   config.streams.push({ level: loggerLevel, stream: process.stdout });
