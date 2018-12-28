@@ -1,6 +1,7 @@
 'use strict';
 
-const DEFAULT_SENSITIVE_DATA_FRAGMENTS = '(mdp|password|authorization|token|pwd|auth)';
+const DEFAULT_SENSITIVE_DATA_FRAGMENTS =
+  '(mdp|password|authorization|token|pwd|auth)';
 
 module.exports = class SensitiveDataStream {
   constructor(fragments) {
