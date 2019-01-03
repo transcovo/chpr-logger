@@ -1,11 +1,10 @@
 'use strict';
 
-const raven = require('raven');
-
 const expect = require('chai').expect;
 const rewire = require('rewire');
 
 let logger = require('../index');
+const { init } = require('../index');
 const SensitiveDataStream = require('../streams/sensitive-data');
 
 const PrettyStream = require('bunyan-prettystream');
@@ -13,29 +12,6 @@ const SentryStream = require('bunyan-sentry-stream').SentryStream;
 
 describe('index.js', () => {
   let oldStdoutWrite;
-
-  describe('Exports', () => {
-    it('should export a reference to raven', () => {
-      expect(logger).to.have.property('raven', raven);
-    });
-
-    it('should export the raven client (no sentry DSN set)', () => {
-      expect(logger).to.have.property('ravenClient', undefined);
-    });
-
-    it('should export the raven client (with sentry DSN set)', () => {
-      const oldEnv = process.env;
-      process.env = {
-        LOGGER_NAME: 'Test logger name',
-        LOGGER_LEVEL: 'debug',
-        SENTRY_DSN: 'https://a:b@fake.com/12345',
-      };
-      logger = rewire('../index');
-      expect(logger).to.have.property('ravenClient');
-      expect(logger.ravenClient).to.be.instanceof(raven.Client.super_);
-      process.env = oldEnv;
-    });
-  });
 
   describe('Log functions', () => {
     const logs = [];
@@ -74,9 +50,12 @@ describe('index.js', () => {
       expect(message.level).to.be.eql(60);
 
       // Should keep the object safe:
-      logger.fatal({
-        a: 1,
-      }, 'hello');
+      logger.fatal(
+        {
+          a: 1,
+        },
+        'hello'
+      );
       message = logs.shift();
 
       expect(message.a).to.be.eql(1);
@@ -85,7 +64,9 @@ describe('index.js', () => {
       logger.fatal(new Error('Fatal error'), 'hello');
       message = logs.shift();
 
-      expect(message.err).to.be.an('object').with.property('stack');
+      expect(message.err)
+        .to.be.an('object')
+        .with.property('stack');
       expect(message.err.stack.substr(0, 18)).to.be.eql('Error: Fatal error');
     });
 
@@ -95,9 +76,12 @@ describe('index.js', () => {
       expect(message.level).to.be.eql(50);
 
       // Should keep the object safe:
-      logger.error({
-        a: 1,
-      }, 'hello');
+      logger.error(
+        {
+          a: 1,
+        },
+        'hello'
+      );
       message = logs.shift();
 
       expect(message.a).to.be.eql(1);
@@ -141,12 +125,15 @@ describe('index.js', () => {
     });
 
     it('should keep objects safe', () => {
-      logger.info({
-        a: 1,
-        b: {
-          c: 1,
+      logger.info(
+        {
+          a: 1,
+          b: {
+            c: 1,
+          },
         },
-      }, 'hello');
+        'hello'
+      );
       const message = logs.shift();
       expect(message.a).to.be.eql(1);
       expect(message.b).to.be.eql({
@@ -157,16 +144,19 @@ describe('index.js', () => {
 
     describe('sensitive data', () => {
       it('must replace sensitive data with __SENSITIVE_DATA__ in logs', () => {
-        logger.info({
-          password: 'My personal password',
-          headers: {
-            'accept-language': 'fr-FR', // unchanged
-            authorization: 'Bearer token',
+        logger.info(
+          {
+            password: 'My personal password',
+            headers: {
+              'accept-language': 'fr-FR', // unchanged
+              authorization: 'Bearer token',
+            },
+            req: {
+              token: 'My personal token',
+            },
           },
-          req: {
-            token: 'My personal token',
-          },
-        }, 'Logging amazingly sensitive data!');
+          'Logging amazingly sensitive data!'
+        );
         const message = logs.shift();
 
         expect(message.password).to.equal('__SENSITIVE_DATA__');
@@ -178,74 +168,69 @@ describe('index.js', () => {
   });
 
   describe('Streams configuration', () => {
-    let originalEnv;
+    it('should use the sensitive data stream if no config is set', () => {
+      const newLogger = init();
 
-    /**
-     * Reload logger configuration
-     * @returns {logger} The reloaded logger
-     */
-    function reloadConfig() {
-      delete require.cache[require.resolve('../index')];
-      return rewire('../index').__get__('config');
-    }
+      expect(newLogger.streams).to.have.lengthOf(1);
+      expect(newLogger.streams[0]).to.have.property('stream');
 
-    beforeEach(() => {
-      originalEnv = process.env;
-      process.env = {};
-    });
-
-    afterEach(() => {
-      process.env = originalEnv;
-    });
-
-    it('should use the sensitive data stream if no environment variable is set', () => {
-      const config = reloadConfig();
-
-      expect(config.streams).to.have.lengthOf(1);
-      expect(config.streams[0]).to.not.include.keys('type');
-      expect(config.streams[0]).to.have.property('stream');
-
-      expect(config.streams[0].stream).to.be.instanceOf(SensitiveDataStream);
-      expect(config.streams[0].stream.fragments).to.equal('(mdp|password|authorization|token|pwd|auth)');
+      expect(newLogger.streams[0].stream).to.be.instanceOf(SensitiveDataStream);
+      expect(newLogger.streams[0].stream.fragments).to.equal(
+        '(mdp|password|authorization|token|pwd|auth)'
+      );
     });
 
     it('should use the sensitive data stream with specific pattern fragments if set', () => {
-      process.env.LOGGER_SENSITIVE_DATA_PATTERN = '(password)';
-      const config = reloadConfig();
+      const newLogger = init({
+        logger: { sensitiveDataPattern: '(password)' },
+      });
 
-      expect(config.streams).to.have.lengthOf(1);
-      expect(config.streams[0]).to.not.include.keys('type');
-      expect(config.streams[0]).to.have.property('stream');
+      expect(newLogger.streams).to.have.lengthOf(1);
+      expect(newLogger.streams[0]).to.have.property('stream');
 
-      expect(config.streams[0].stream).to.be.instanceOf(SensitiveDataStream);
-      expect(config.streams[0].stream.fragments).to.equal('(password)');
+      expect(newLogger.streams[0].stream).to.be.instanceOf(SensitiveDataStream);
+      expect(newLogger.streams[0].stream.fragments).to.equal('(password)');
     });
 
     it('should use only the default stdout stream if LOGGER_USE_SENSITIVE_DATA_STREAM is false', () => {
-      process.env.LOGGER_USE_SENSITIVE_DATA_STREAM = 'false';
-      const config = reloadConfig();
+      const newLogger = init({
+        logger: { hideSensitiveData: false },
+      });
 
-      expect(config.streams).to.have.lengthOf(1);
-      expect(config.streams[0]).to.not.include.keys('type');
-      expect(config.streams[0]).to.have.property('stream', process.stdout);
+      expect(newLogger.streams).to.have.lengthOf(1);
+      expect(newLogger.streams[0]).to.have.property('stream', process.stdout);
     });
 
     it('should use the pretty stream formatter with USE_BUNYAN_PRETTY_STREAM set to true', () => {
-      process.env.USE_BUNYAN_PRETTY_STREAM = 'true';
-      const config = reloadConfig();
+      const newLogger = init({
+        logger: { pretty: true },
+      });
 
-      expect(config.streams).to.have.lengthOf(1);
-      expect(config.streams[0]).to.have.property('type', 'raw');
-      expect(config.streams[0]).to.have.property('level', 'info');
-      expect(config.streams[0].stream).to.be.instanceOf(PrettyStream);
+      expect(newLogger.streams).to.have.lengthOf(1);
+      expect(newLogger.streams[0]).to.have.property('type', 'raw');
+      expect(newLogger.streams[0]).to.have.property('level', 30);
+      expect(newLogger.streams[0].stream).to.be.instanceOf(PrettyStream);
     });
 
     it('should have sentry stream with SENTRY_DSN set', () => {
-      process.env.SENTRY_DSN = 'https://a:b@fake.com/12345';
-      const config = reloadConfig();
+      const newLogger = init({
+        sentry: {
+          dsn: 'https://a:b@fake.com/12345',
+          release: 'some_release',
+          environment: 'some_env',
+        },
+      });
 
-      expect(config.streams).to.have.lengthOf(2);
-      expect(config.streams[1].stream).to.be.instanceOf(SentryStream);
+      expect(newLogger.streams).to.have.lengthOf(2);
+      expect(newLogger.streams[1].stream).to.be.instanceOf(SentryStream);
+      expect(newLogger.streams[1].stream).to.have.deep.property(
+        'client.environment',
+        'some_env'
+      );
+      expect(newLogger.streams[1].stream).to.have.deep.property(
+        'client.release',
+        'some_release'
+      );
     });
   });
 });

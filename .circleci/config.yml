@@ -1,18 +1,19 @@
 version: 2
 jobs:
-  test:
+  build-6:
     docker:
-      - image: node:6.11
-
+      - image: 'circleci/node:6.11.1'
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ .Branch }}-{{ checksum "package.json" }}
+          name: Restore node_modules cache
+          key: dependency-cache-{{ .Branch }}-{{ checksum "package.json" }}-node6
       - run:
-          name: Install node modules
-          command: npm i
+          name: Install node_modules
+          command: npm install
       - save_cache:
-          key: dependency-cache-{{ .Branch }}-{{ checksum "package.json" }}
+          name: Save node_modules cache
+          key: dependency-cache-{{ .Branch }}-{{ checksum "package.json" }}-node6
           paths:
             - node_modules
             - /root/.npm
@@ -20,18 +21,67 @@ jobs:
           name: Run tests
           command: npm test
       - run:
-          name: Codecov
-          command: bash <(curl -s https://codecov.io/bash)
+          name: Coverage
+          command: 'bash <(curl -s https://codecov.io/bash)'
+      - store_artifacts:
+          path: coverage
+
+  build-8:
+    docker:
+      - image: 'circleci/node:8'
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore node_modules cache
+          key: dependency-cache-{{ .Branch }}-{{ checksum "package.json" }}-node8
+      - run:
+          name: Install node_modules
+          command: npm install
+      - save_cache:
+          name: Save node_modules cache
+          key: dependency-cache-{{ .Branch }}-{{ checksum "package.json" }}-node8
+          paths:
+            - node_modules
+            - /root/.npm
+      - run:
+          name: Run tests
+          command: npm test
+      - run:
+          name: Coverage
+          command: 'bash <(curl -s https://codecov.io/bash)'
+      - store_artifacts:
+          path: coverage
+
+  build-10:
+    docker:
+      - image: 'circleci/node:10'
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore node_modules cache
+          key: dependency-cache-{{ .Branch }}-{{ checksum "package.json" }}-node10
+      - run:
+          name: Install node_modules
+          command: npm install
+      - save_cache:
+          name: Save node_modules cache
+          key: dependency-cache-{{ .Branch }}-{{ checksum "package.json" }}-node10
+          paths:
+            - node_modules
+            - /root/.npm
+      - run:
+          name: Run tests
+          command: npm test
+      - run:
+          name: Coverage
+          command: 'bash <(curl -s https://codecov.io/bash)'
+      - store_artifacts:
+          path: coverage
 
 workflows:
   version: 2
   test:
     jobs:
-      - test:
-          filters:
-            branches:
-              ignore:
-                - greenlight
-                - terminator
-                - staging
-                - release
+      - build-6
+      - build-8
+      - build-10
