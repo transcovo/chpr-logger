@@ -7,6 +7,7 @@ const sentryStream = require('bunyan-sentry-stream');
 const PrettyStream = require('bunyan-prettystream');
 
 const SensitiveDataStream = require('./streams/sensitive-data');
+const serializers = require('./serializers');
 
 const defaultConfig = {
   logger: {
@@ -33,7 +34,7 @@ function init(config) {
     level: loggerLevel,
     streams: [],
     serializers: {
-      err: bunyan.stdSerializers.err,
+      err: serializers.err,
     },
   };
 
