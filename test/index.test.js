@@ -154,15 +154,20 @@ describe('index.js', () => {
             req: {
               token: 'My personal token',
             },
+            cmd: 'command docker build password=test',
           },
           'Logging amazingly sensitive data!'
         );
+
         const message = logs.shift();
 
         expect(message.password).to.equal('__SENSITIVE_DATA__');
         expect(message.headers['accept-language']).to.equal('fr-FR');
         expect(message.headers.authorization).to.equal('__SENSITIVE_DATA__');
         expect(message.req.token).to.equal('__SENSITIVE_DATA__');
+        expect(message.cmd).to.equal(
+          'command docker build password=__SENSITIVE_DATA__'
+        );
       });
     });
   });
@@ -182,7 +187,7 @@ describe('index.js', () => {
 
     it('should use the sensitive data stream with specific pattern fragments if set', () => {
       const newLogger = init({
-        logger: { sensitiveDataPattern: '(password)' },
+        logger: { sensitiveDataFragment: '(password)' },
       });
 
       expect(newLogger.streams).to.have.lengthOf(1);
@@ -190,6 +195,30 @@ describe('index.js', () => {
 
       expect(newLogger.streams[0].stream).to.be.instanceOf(SensitiveDataStream);
       expect(newLogger.streams[0].stream.fragments).to.equal('(password)');
+    });
+
+    it('should use the sensitive data stream with specific replacement patterns if set', () => {
+      const sensitiveDataPattern = [
+        {
+          regex: new RegExp(`(testing_string)=([\\w-]*)`, 'ig'),
+          substitute: `"$1":"__TESTING_REPLACEMENT__"`,
+        },
+      ];
+
+      const newLogger = init({
+        logger: { sensitiveDataPattern },
+      });
+
+      expect(newLogger.streams).to.have.lengthOf(1);
+      expect(newLogger.streams[0]).to.have.property('stream');
+
+      expect(newLogger.streams[0].stream).to.be.instanceOf(SensitiveDataStream);
+      expect(newLogger.streams[0].stream.patterns).to.deep.equal([
+        {
+          regex: /(testing_string)=([\w-]*)/gi,
+          substitute: `"$1":"__TESTING_REPLACEMENT__"`,
+        },
+      ]);
     });
 
     it('should use only the default stdout stream if LOGGER_USE_SENSITIVE_DATA_STREAM is false', () => {
