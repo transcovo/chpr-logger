@@ -76,6 +76,10 @@ values by `__SENSITIVE_DATA__` string. This feature is enabled by default but
 you can skip this (not recommanded) by setting the environment variable
 `LOGGER_USE_SENSITIVE_DATA_STREAM` to `false`.
 
+In addition, you can update the pattern on which to make the match with the
+environment variable `LOGGER_SENSITIVE_DATA_PATTERN`. Its value must represent
+a valid [capturing regular expression](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Objets_globaux/RegExp#group_back).
+
 You also can add custom filter :
 ```
 const sensitiveDataFragment = '(pass|password)'; // Will obfuscate 'pass' and 'password' data
@@ -87,7 +91,7 @@ const newLogger = init({
 });
 ```
 
-Moreover, you can also add customize the way it replaces data :
+Moreover, you can add customize the way it replaces data :
 ```
 const sensitiveDataPattern = [
   {
@@ -103,6 +107,4 @@ const newLogger = init({
 });
 ```
 
-In addition, you can update the pattern on which to make the match with the
-environment variable `LOGGER_SENSITIVE_DATA_PATTERN`. Its value must represent
-a valid [capturing regular expression](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Objets_globaux/RegExp#group_back).
+🚨 Process is synchronous, it means that `sensitiveDataPattern` can produce performance issues on large sizes.
