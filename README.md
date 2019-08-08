@@ -79,3 +79,32 @@ you can skip this (not recommanded) by setting the environment variable
 In addition, you can update the pattern on which to make the match with the
 environment variable `LOGGER_SENSITIVE_DATA_PATTERN`. Its value must represent
 a valid [capturing regular expression](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Objets_globaux/RegExp#group_back).
+
+You also can add custom filter :
+```
+const sensitiveDataFragment = '(pass|password)'; // Will obfuscate 'pass' and 'password' data
+
+const newLogger = init({
+  logger: {
+    sensitiveDataFragment,
+  },
+});
+```
+
+Moreover, you can add customize the way it replaces data :
+```
+const sensitiveDataPattern = [
+  {
+    regex: YOUR_NEW_REGEX,
+    substitute: SUBSTITUTION_CONTENT,
+  }
+]; // Will replace data matching with new regex by substitute content
+
+const newLogger = init({
+  logger: {
+    sensitiveDataPattern,
+  },
+});
+```
+
+🚨 Process is synchronous, it means that `sensitiveDataPattern` can produce performance issues on large sizes.
