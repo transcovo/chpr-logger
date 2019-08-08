@@ -165,8 +165,52 @@ describe('index.js', () => {
         expect(message.headers['accept-language']).to.equal('fr-FR');
         expect(message.headers.authorization).to.equal('__SENSITIVE_DATA__');
         expect(message.req.token).to.equal('__SENSITIVE_DATA__');
+      });
+
+      it('should replace good parts of string using custom replacement & fragment patterns', () => {
+        const sensitiveDataPattern = [
+          {
+            regex: new RegExp(`(password)=([\\w-]*)`, 'ig'),
+            substitute: `$1=__SENSITIVE_DATA__`,
+          },
+        ];
+
+        const newLogger = init({
+          logger: { sensitiveDataPattern },
+        });
+
+        newLogger.info(
+          {
+            password: 'My personal password',
+            pass: 'My other personal password',
+            headers: {
+              'accept-language': 'fr-FR', // unchanged
+              authorization: 'Bearer token',
+            },
+            req: {
+              token: 'My personal token',
+            },
+            cmd:
+              'command docker build --build-arg password=test-1234-abcd --build-arg password=test1234-abcd --build-arg password=TEST-1234-abcd ',
+            cmd2: 'command docker build --build-arg password=test',
+          },
+          'Logging amazingly sensitive data!'
+        );
+
+        const message = logs.shift();
+
+        // Default cases
+        expect(message.password).to.equal('__SENSITIVE_DATA__');
+        expect(message.headers['accept-language']).to.equal('fr-FR');
+        expect(message.headers.authorization).to.equal('__SENSITIVE_DATA__');
+        expect(message.req.token).to.equal('__SENSITIVE_DATA__');
+
+        // Custom cases
         expect(message.cmd).to.equal(
-          'command docker build password=__SENSITIVE_DATA__'
+          'command docker build --build-arg password=__SENSITIVE_DATA__ --build-arg password=__SENSITIVE_DATA__ --build-arg password=__SENSITIVE_DATA__ '
+        );
+        expect(message.cmd2).to.equal(
+          'command docker build --build-arg password=__SENSITIVE_DATA__'
         );
       });
     });
@@ -213,12 +257,14 @@ describe('index.js', () => {
       expect(newLogger.streams[0]).to.have.property('stream');
 
       expect(newLogger.streams[0].stream).to.be.instanceOf(SensitiveDataStream);
-      expect(newLogger.streams[0].stream.patterns).to.deep.equal([
+      expect(newLogger.streams[0].stream.patterns).to.have.lengthOf(2); // New pattern & default one
+      expect(newLogger.streams[0].stream.patterns[0]).to.deep.equal(
+        // Test the 1st pattern (the other one is the default one)
         {
           regex: /(testing_string)=([\w-]*)/gi,
           substitute: `"$1":"__TESTING_REPLACEMENT__"`,
-        },
-      ]);
+        }
+      );
     });
 
     it('should use only the default stdout stream if LOGGER_USE_SENSITIVE_DATA_STREAM is false', () => {

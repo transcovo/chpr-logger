@@ -8,23 +8,16 @@ module.exports = class SensitiveDataStream {
     this.fragments = fragments || DEFAULT_SENSITIVE_DATA_FRAGMENTS;
     this.replacer = '__SENSITIVE_DATA__';
 
-    // If a pattern is provided
-    if (patterns.length) {
-      this.patterns = patterns;
-    } else {
-      // If no pattern provided, then add 2 default regexes
-      this.patterns = [
-        {
-          regex: new RegExp(`"${this.fragments}":"([^"]*)"`, 'ig'), // @Match "mdp":"My super password"
-          substitute: `"$1":"${this.replacer}"`,
-        },
-        {
-          regex: new RegExp(`${this.fragments}=([\\w-]*)`, 'ig'), // @Match mdp=My-super-password
-          substitute: `$1=${this.replacer}`,
-        },
-      ];
-    }
+    this.patterns = [
+      ...patterns,
+      {
+        // Default pattern
+        regex: new RegExp(`"${this.fragments}":"([^"]*)"`, 'ig'), // @Match "mdp":"My super password"
+        substitute: `"$1":"${this.replacer}"`,
+      },
+    ];
   }
+
   write(input) {
     let sanitized = input;
 
