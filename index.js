@@ -49,10 +49,7 @@ function init(config) {
   } else if (finalConfig.logger.hideSensitiveData) {
     loggerConfig.streams.push({
       level: loggerLevel,
-      stream: new SensitiveDataStream(
-        finalConfig.logger.sensitiveDataFragment,
-        finalConfig.logger.sensitiveDataPattern
-      ),
+      stream: new SensitiveDataStream(finalConfig.logger.sensitiveDataPattern),
     });
   } else {
     loggerConfig.streams.push({ level: loggerLevel, stream: process.stdout });
