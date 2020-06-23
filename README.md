@@ -29,6 +29,7 @@ npm install --save chpr-logger
 | `LOGGER_NAME`              | yes      | Sets the name of the logger.                                                                                                                                                      |
 | `LOGGER_LEVEL`             | yes      | Set the minimum level of logs.                                                                                                                                                    |
 | `SENTRY_DSN`               | no       | Sets the Sentry stream. ([bunyan-sentry-stream](https://www.npmjs.com/package/bunyan-sentry-stream))                                                                              |
+| `SENTRY_ENVIRONMENT`       | no       | Sets the Sentry Environment.                                                                                                                                                      |
 | `USE_BUNYAN_PRETTY_STREAM` | no       | Outputs the logs on stdout with the pretty formatting from Bunyan. Must be set to `true` to be active. ([bunyan-prettystream](https://www.npmjs.com/package/bunyan-prettystream)) |
 | `LOGGER_USE_SENSITIVE_DATA_STREAM` | no       | Use the sensitive data stream to remove any possible sensitive data from the logs (enabled by default, `false` to use the `process.stdout` stream). |
 | `LOGGER_SENSITIVE_DATA_PATTERN` | no       | Pattern fragments to match sensitive keys (default is `(mdp|password|authorization|token|pwd|auth)`). |

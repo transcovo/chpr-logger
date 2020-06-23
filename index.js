@@ -20,7 +20,7 @@ const defaultConfig = {
   sentry: {
     dsn: process.env.SENTRY_DSN,
     release: undefined,
-    environment: process.env.NODE_ENV || 'development',
+    environment: process.env.SENTRY_ENVIRONMENT || 'development',
   },
 };
 
